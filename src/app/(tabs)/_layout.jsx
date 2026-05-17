@@ -5,7 +5,7 @@ import { useAuth } from '@clerk/expo'
 const TabsLayout = () => {
     const {isSignedIn} = useAuth();
     if(!isSignedIn) {
-        return <Redirect href={"/{auth}/sign-in"} />
+        return <Redirect href={"/(auth)/sign-in"} />
     }
   return (
     <Stack />

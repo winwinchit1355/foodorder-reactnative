@@ -86,6 +86,35 @@ const roseGoldTheme = {
   shadow: "#000000",
 };
 
+const foodieTheme = {
+  primary: "#ed807f",
+  background: "#fcd1c0",
+  text: "#144848",
+  border: "#d5d9d9",
+  white: "#FFFFFF",
+  textLight: "#d9f4f0",
+  card: "#f6f7f7",
+  shadow: "#000000",
+  backgroundLight: "#fcd1c0",
+  backgroundHero: "#ed807f",
+  textSubtitle: "#d9f4f0",
+  textLink: "#d9f4f0",
+  textDark: "#144848",
+  inputBg: "#eceff0",
+  inputPlaceholder: "#9fa9a9",
+  cardBg: "#f6f7f7",
+  buttonBg: "#ed807f",
+  buttonText: "#ffffff",
+  forgotText: "#ed807f",
+  divider: "#d5d9d9",
+  orText: "#91a0a0",
+  socialBg: "#ffffff",
+  socialBorder: "#e6e8e8",
+  socialText: "#ed807f",
+  footerText: "#6b7f7f",
+  footerLink: "#ed807f",
+};
+
 export const THEMES = {
   coffee: coffeeTheme,
   forest: forestTheme,
@@ -95,7 +124,8 @@ export const THEMES = {
   mint: mintTheme,
   midnight: midnightTheme,
   roseGold: roseGoldTheme,
+  foodie: foodieTheme,
 };
 
 // 👇 change this to switch theme
-export const COLORS = THEMES.coffee;
+export const COLORS = THEMES.foodie;

@@ -8,6 +8,9 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useSignUp } from "@clerk/expo";
 import { router } from "expo-router";
@@ -78,73 +81,78 @@ export default function SignUp() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.hero}>
-            <Text style={styles.topStatus}>9:41</Text>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text style={styles.topLink}>← Back to login</Text>
-            </TouchableOpacity>
-            <Text style={styles.title}>Join us</Text>
-            <Text style={styles.subtitle}>Create your plantland account</Text>
-          </View>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.hero}>
+              <TouchableOpacity onPress={() => router.back()}>
+                <Text style={styles.topLink}>← Back to login</Text>
+              </TouchableOpacity>
+              <Text style={styles.title}>Join us</Text>
+              <Text style={styles.subtitle}>Create your foodie account</Text>
+            </View>
 
-          <View style={styles.card}>
-            <Text style={styles.formTitle}>Sign Up</Text>
+            <View style={styles.card}>
+              <Image
+                  source={require("../../../assets/images/auth/auth-logo.jpeg")}
+                  style={styles.cardLogo}
+                />
+              <Text style={styles.formTitle}>Sign Up</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#9fa9a9"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={emailAddress}
-              onChangeText={setEmailAddress}
-            />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#9fa9a9"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={emailAddress}
+                onChangeText={setEmailAddress}
+              />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#9fa9a9"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#9fa9a9"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#9fa9a9"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                placeholderTextColor="#9fa9a9"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Phone"
-              placeholderTextColor="#9fa9a9"
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone"
+                placeholderTextColor="#9fa9a9"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+              />
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={onSignUpPress}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Sign Up</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={onSignUpPress}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
   );

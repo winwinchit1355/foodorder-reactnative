@@ -1,4 +1,14 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+
+const { width } = Dimensions.get("window");
+const isSmallPhone = width <= 360;
+const isTablet = width >= 768;
+
+const pick = (small, base, tablet) => {
+  if (isTablet) return tablet;
+  if (isSmallPhone) return small;
+  return base;
+};
 
 const colors = {
   backgroundLight: "#fcd1c0",
@@ -30,16 +40,19 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundLight,
   },
+  keyboardView: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
   },
   hero: {
     backgroundColor: colors.backgroundHero,
-    paddingTop: 22,
-    paddingHorizontal: 24,
-    paddingBottom: 76,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    paddingTop: pick(10, 15, 22),
+    paddingHorizontal: pick(16, 24, 34),
+    paddingBottom: pick(58, 76, 94),
+    borderBottomLeftRadius: pick(22, 30, 36),
+    borderBottomRightRadius: pick(22, 30, 36),
     overflow: "hidden",
   },
   topStatus: {
@@ -50,20 +63,21 @@ export default StyleSheet.create({
   },
   title: {
     color: colors.buttonText,
-    fontSize: 42,
+    fontSize: pick(34, 42, 54),
     fontWeight: "800",
-    lineHeight: 46,
+    lineHeight: pick(38, 46, 58),
+    marginVertical: 8,
   },
   subtitle: {
     color: colors.textSubtitle,
-    fontSize: 17,
-    marginTop: 6,
+    fontSize: pick(15, 17, 22),
     fontWeight: "500",
   },
   topLink: {
     color: colors.textLink,
     fontSize: 14,
-    marginBottom: 8,
+    marginVertical: 22,
+    marginBottom: 22,
     fontWeight: "500",
   },
   heroPlant: {
@@ -77,40 +91,49 @@ export default StyleSheet.create({
   },
   card: {
     flex: 1,
-    marginHorizontal: 16,
-    marginTop: -34,
+    marginTop: pick(-24, -34, -44),
     backgroundColor: colors.cardBg,
-    borderRadius: 30,
-    paddingHorizontal: 18,
-    paddingTop: 24,
-    paddingBottom: 22,
+    borderTopLeftRadius: pick(22, 30, 36),
+    borderTopRightRadius: pick(22, 30, 36),
+    paddingHorizontal: pick(14, 18, 28),
+    paddingTop: pick(16, 22, 32),
+    paddingBottom: pick(24, 34, 42),
+  },
+  cardLogo: {
+    width: pick(92, 120, 146),
+    height: pick(92, 120, 146),
+    position: "absolute",
+    top: pick(-38, -50, -60),
+    right: pick(8, 16, 22),
+    borderRadius: pick(46, 60, 73),
   },
   formTitle: {
-    fontSize: 38,
+    fontSize: pick(28, 32, 40),
     color: colors.backgroundHero,
     fontWeight: "800",
-    marginBottom: 18,
+    marginBottom: pick(20, 32, 40),
+    marginTop: pick(8, 12, 16),
   },
   input: {
     backgroundColor: colors.inputBg,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 44,
+    borderRadius: pick(14, 16, 18),
+    paddingHorizontal: pick(14, 16, 20),
+    height: pick(42, 44, 52),
     color: colors.textDark,
-    marginBottom: 12,
+    marginBottom: pick(10, 12, 16),
   },
   button: {
     marginTop: 8,
-    height: 46,
+    height: pick(44, 46, 54),
     backgroundColor: colors.buttonBg,
-    borderRadius: 22,
+    borderRadius: pick(20, 22, 27),
     alignItems: "center",
     justifyContent: "center",
   },
   buttonText: {
     color: colors.buttonText,
     fontWeight: "700",
-    fontSize: 17,
+    fontSize: pick(16, 17, 20),
   },
   forgot: {
     alignSelf: "flex-end",
