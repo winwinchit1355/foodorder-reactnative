@@ -12,22 +12,27 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useSignUp } from "@clerk/expo";
+import { useAuth, useSignUp } from '@clerk/expo'
 import { router } from "expo-router";
-import styles from "@/assets/auth/styles";
+import styles from "@/assets/styles/auth.styles";
+import { COLORS } from "../../../constants/colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function SignUp() {
-  const { isLoaded, signUp } = useSignUp();
+  const { signUp, errors, fetchStatus } = useSignUp()
+  const { isSignedIn } = useAuth()
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
 
   const onSignUpPress = async () => {
-    if (!isLoaded) return;
-
     if (!emailAddress.trim()) {
       Alert.alert("Email Required", "Please enter your email");
       return;
@@ -44,8 +49,8 @@ export default function SignUp() {
       return;
     }
 
-    if (password.length < 8) {
-      Alert.alert("Weak Password", "Password should be at least 8 characters");
+    if (password.length < 6) {
+      Alert.alert("Weak Password", "Password should be at least 6 characters");
       return;
     }
 
@@ -57,16 +62,31 @@ export default function SignUp() {
     try {
       setLoading(true);
 
-      await signUp.create({
+      // await signUp.create({
+      //   emailAddress,
+      //   password,
+      // });
+
+      // await signUp.prepareEmailAddressVerification({
+      //   strategy: "email_code",
+      // });
+      const { error } = await signUp.password({
         emailAddress,
         password,
-      });
+      })
+      if (error) {
+        Alert.alert(
+          "Sign Up Failed",
+          error.errors?.[0]?.message || "Something went wrong",
+        );
+        console.error('wwc',JSON.stringify(error, null, 2))
+        return
+      }
 
-      await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
-      });
+      if (!error) await signUp.verifications.sendEmailCode()
 
       Alert.alert("Verify your email", "We sent a verification code to your email.");
+      setPendingVerification(true);
       router.push("/verify-email");
     } catch (err) {
       Alert.alert(
@@ -76,12 +96,19 @@ export default function SignUp() {
     } finally {
       setLoading(false);
     }
+    if(pendingVerification) {
+      return <Text style={styles.pendingText}>Please check your email for the verification code.</Text>
+    }
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    // <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === "ios" ? "padding" : "height"} 
+          style={styles.keyboardView}
+          keyboardVerticalOffset={Platform.OS === "ios"? 64: 0}
+          >
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
@@ -96,64 +123,107 @@ export default function SignUp() {
             </View>
 
             <View style={styles.card}>
-              <Image
-                  source={require("../../../assets/images/auth/auth-logo.jpeg")}
-                  style={styles.cardLogo}
+              <View>
+                <Image
+                    source={require("../../../assets/images/auth/auth-logo.jpeg")}
+                    style={styles.cardLogo}
+                  />
+                <Text style={styles.formTitle}>Sign Up</Text>
+              </View>
+
+              {/* <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Name"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  value={name}
+                  onChangeText={setName}
                 />
-              <Text style={styles.formTitle}>Sign Up</Text>
+              </View> */}
 
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#9fa9a9"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={emailAddress}
-                onChangeText={setEmailAddress}
-              />
+              <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={emailAddress}
+                  onChangeText={setEmailAddress}
+                />
+              </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#9fa9a9"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
+              {/* <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Phone"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={setPhone}
+                />
+              </View> */}
 
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm Password"
-                placeholderTextColor="#9fa9a9"
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity
+                  style={styles.showPasswordButton}
+                  onPress={() => setShowPassword((prev) => !prev)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color={COLORS.inputPlaceholder}
+                  />
+                </TouchableOpacity>
+              </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Phone"
-                placeholderTextColor="#9fa9a9"
-                keyboardType="phone-pad"
-                value={phone}
-                onChangeText={setPhone}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm Password"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  secureTextEntry={!showConfirmPassword}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+                <TouchableOpacity
+                  style={styles.showPasswordButton}
+                  onPress={() => setShowConfirmPassword((prev) => !prev)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color={COLORS.inputPlaceholder}
+                  />
+                </TouchableOpacity>
+              </View>
 
-              <TouchableOpacity
-                style={styles.button}
-                onPress={onSignUpPress}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.buttonText}>Sign Up</Text>
-                )}
-              </TouchableOpacity>
+              <View>
+                <TouchableOpacity
+                  style={[styles.button, loading && styles.buttonDisabled]}
+                  onPress={onSignUpPress}
+                  disabled={loading}
+                  activeOpacity={0.8}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Sign Up</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </SafeAreaView>
+    // </SafeAreaView>
   );
 }

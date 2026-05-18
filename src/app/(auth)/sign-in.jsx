@@ -14,10 +14,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useSignIn } from "@clerk/expo";
 import { router } from "expo-router";
-import styles from "@/assets/auth/styles";
+import styles from "@/assets/styles/auth.styles";
 import { COLORS } from "../../../constants/colors";
 
 export default function SignInScreen() {
@@ -78,9 +79,13 @@ export default function SignInScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    // <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === "ios" ? "padding" : "height"} 
+          style={styles.keyboardView}
+          keyboardVerticalOffset={Platform.OS === "ios"? 64: 0}
+          >
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
@@ -92,44 +97,63 @@ export default function SignInScreen() {
             </View>
 
             <View style={styles.card}>
-              <Image
-                source={require("../../../assets/images/auth/auth-logo.jpeg")}
-                style={styles.cardLogo}
-              />
-              <Text style={styles.formTitle}>Login</Text>
+              <View>
+                <Image
+                  source={require("../../../assets/images/auth/auth-logo.jpeg")}
+                  style={styles.cardLogo}
+                />
+                <Text style={styles.formTitle}>Login</Text>
+              </View>
+              <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={emailAddress}
+                  onChangeText={setEmailAddress}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor={COLORS.inputPlaceholder}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity
+                  style={styles.showPasswordButton}
+                  onPress={() => setShowPassword((prev) => !prev)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color={COLORS.inputPlaceholder}
+                  />
+                </TouchableOpacity>
+              </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor={COLORS.inputPlaceholder}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={emailAddress}
-                onChangeText={setEmailAddress}
-              />
+              <View>
+                <Text style={styles.forgot}>Forgot Password</Text>
+              </View>
 
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#9fa9a9"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-              />
-
-              <Text style={styles.forgot}>Forgot Password</Text>
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={onSignInPress}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.buttonText}>Login</Text>
-                )}
-              </TouchableOpacity>
+              <View>
+                <TouchableOpacity
+                  style={[styles.button, loading && styles.buttonDisabled]}
+                  onPress={onSignInPress}
+                  disabled={loading}
+                  activeOpacity={0.8}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Login</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
 
               <View style={styles.dividerRow}>
                 <View style={styles.dividerLine} />
@@ -158,6 +182,6 @@ export default function SignInScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </SafeAreaView>
+    // </SafeAreaView>
   );
 }
